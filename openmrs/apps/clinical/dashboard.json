@@ -40,6 +40,16 @@
                 "showDetailsButton":true,
                 "displayOrder":1
             },
+            
+            "ipsSummary": {
+                "type": "custom",
+                "displayOrder": 22,
+                "config": {
+                    "title": "IPS Summary",
+                    "template": "<ips-summary-control patient-uuid='patient.uuid'></ips-summary-control>"
+                }
+            },
+
             "navigationLinksControl":{  
                 "translationKey":"DASHBOARD_TITLE_NAVIGATION_LINKS_CONTROL_KEY",
                 "type":"navigationLinksControl",
