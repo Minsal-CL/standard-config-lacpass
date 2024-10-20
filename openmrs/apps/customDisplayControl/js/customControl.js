@@ -16,6 +16,64 @@ angular.module('bahmni.common.displaycontrol.custom')
                 template: '<ng-include src="contentUrl"/>',
                 link: link
             }
+
+
+        
+}]);.directive('ipsSummaryControl', ['openmrsPatientService', 'ipsService', 'spinner', function (openmrsPatientService, ipsService, spinner) {
+            return {
+              restrict: 'E',
+              scope: {
+                patientUuid: '='
+              },
+              link: function ($scope, element, attrs) {
+                $scope.contentUrl = "/bahmni_config/openmrs/apps/clinical/customDisplayControl/ips-summary.html";
+        
+                // Obtener datos del paciente de OpenMRS
+                openmrsPatientService.getPatient($scope.patientUuid).then(function (patientData) {
+                  $scope.patient = patientData;
+        
+                  // Función para buscar documentos IPS LAC (ITI-67)
+                  $scope.fetchIpsDocuments = function () {
+                    spinner.forPromise(
+                      ipsService.getIpsDocuments($scope.patient.identifier).then(function (data) {
+                        $scope.ipsDocuments = data;
+                      })
+                    );
+                  };
+        
+                  // Función para recuperar un documento IPS (ITI-68)
+                  $scope.retrieveIpsDocument = function (documentId) {
+                    spinner.forPromise(
+                      ipsService.retrieveIpsDocument(documentId).then(function (data) {
+                        $scope.selectedIpsDocument = data;
+                      })
+                    );
+                  };
+        
+                  // Función para generar QR a partir de IPS (TC11)
+                  $scope.generateQrFromIps = function () {
+                    spinner.forPromise(
+                      ipsService.generateQrFromIps($scope.patient.identifier).then(function (qrCode) {
+                        $scope.qrCode = qrCode;
+                      })
+                    );
+                  };
+        
+                  // Función para validar QR (TC13/TC14)
+                  $scope.validateQrCode = function () {
+                    spinner.forPromise(
+                      ipsService.validateQr($scope.qrInput).then(function (result) {
+                        $scope.validationResult = result;
+                      })
+                    );
+                  };
+                });
+              },
+              template: '<ng-include src="contentUrl"/>'
+            };
+
+
+    
     }]).directive('deathCertificate', ['observationsService', 'appService', 'spinner', function (observationsService, appService, spinner) {
         var link = function ($scope) {
             var conceptNames = ["WEIGHT"];
